@@ -1,2 +1,31 @@
 ---
 # tasks file for base-nginx
+- name: Check if ufw/firewall is enabled
+  shell: ufw status
+  changed_when: False
+  ignore_errors: True
+  register: ufw_check
+- debug:
+    msg: "{{ ufw_check }}"
+
+- name: Enable HTTP protocol for web application communication
+  firewalld:
+    port: 80/HTTP
+    permanent: yes
+    state: enabled
+
+- name: Install nginx web/proxy server
+  apt:
+    name: "{{ packages }}"
+    update_cache: yes
+    state: present
+  vars:
+    packages:
+      - nginx
+  environment: # does not run immediately
+
+- name: notify to start the nginx service
+  notify: Start Nginx
+
+- name: notify to enable the nginx service
+  notify: Enable Nginx
