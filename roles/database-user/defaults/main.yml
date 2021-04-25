@@ -1,2 +1,5 @@
 ---
 # defaults file for database-user
+db_user: def_user
+db_name: default
+db_user_pass: notSecurePass
