@@ -1,0 +1,34 @@
+---
+# tasks file for base-database
+- name: Check if ufw/firewall is enabled
+  shell: ufw status
+  changed_when: False
+  ignore_errors: True
+  register: ufw_check
+- debug:
+    msg: "{{ ufw_check }}"
+
+- name: Expose default port for postgresql client usage
+  firewalld:
+    port: 5432/TCP
+    permanent: yes
+    state: enabled
+
+- name: Install latest postgresql
+  apt:
+    name: "{{ packages }}"
+    update_cache: yes
+    state: present
+  vars:
+    packages:
+      - postgresql
+      - postgresql-contrib
+  environment: # does not run immediately
+    RUNLEVEL: 1
+
+- name: notify to start the postgresql service
+  notify: Start PostgreSQL
+
+- name: notify to enable the postgresql service
+  notify: Enable PostgreSQL
+

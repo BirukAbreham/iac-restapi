@@ -1,0 +1,12 @@
+---
+# handlers file for base-database
+- name: Start PostgreSQL
+  service: name=postgresql state=started
+
+- name: Restart PostgreSQL
+  service: name=postgresql state=restarted
+
+- name: Enable PostgreSQL
+  service:
+    name: postgresql
+    enabled: yes
