@@ -1,2 +1,4 @@
 ---
 # defaults file for app-deploy
+repo_url: https://github.com/BirukAbreham/iac-restapi-project.git
+repo_dir: /home/biruk/iac-restapi-project

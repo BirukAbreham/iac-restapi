@@ -1,2 +1,53 @@
 ---
 # tasks file for app-deploy
+- name: Install cURL and git package (necessary for deployment)
+  apt:
+    name: "{{ packages }}"
+    update_cache: yes
+    state: present
+  vars:
+    packages:
+      - curl
+      - git
+
+# Node.js PPA installation from nodesource for LTS version
+- name: Install PPA for the Node.js version 14 LTS
+  shell: curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+  ignore_errors: yes
+
+- name: Install latest version of Node.js
+  apt:
+    name: nodejs
+    update_cache: yes
+    state: present
+
+- name: Install global npm packages such as pm2, typeorm-cli etc
+  npm:
+    name: "{{ global_packages }}"
+    global: yes
+    production: yes
+  vars:
+    global_packages:
+      - pm2
+      - typeorm
+      - ts-node
+
+- name: Git clone the rest-api project to deploy in some directory
+  git:
+    repo: "{{ repo_url }}"
+    clone: yes
+    dest: "{{ repo_dir }}"
+
+- name: In that directory execute npm install
+  npm:
+    path: "{{ repo_dir }}"
+
+# uses the .env.j2 file with variable interpolated as a value
+- name: Copy the deployment template file to project root as .env file
+  template:
+    src: .env.j2
+    dest: "{{ repo_dir }}/.env"
+
+- name: Build and start the project as a service using pm2
+- name: Configure to nginx to server the rest-api service as a proxy
+- name: restart nginx server
