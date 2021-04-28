@@ -2,3 +2,15 @@
 # defaults file for app-deploy
 repo_url: https://github.com/BirukAbreham/iac-restapi-project.git
 repo_dir: /home/biruk/iac-restapi-project
+
+# database env variables
+db_user: def_user
+db_name: default
+db_user_pass: notSecurePass
+
+db_type: postgres
+db_host: 192.168.56.21
+db_port: 5432
+
+# nginx root directory
+nginx_root_dir: /home/biruk/iac-restapi-project

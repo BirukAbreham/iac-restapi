@@ -14,12 +14,14 @@
 - name: Install PPA for the Node.js version 14 LTS
   shell: curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash -
   ignore_errors: yes
+  become: yes
 
 - name: Install latest version of Node.js
   apt:
     name: nodejs
     update_cache: yes
     state: present
+  become: yes
 
 - name: Install global npm packages such as pm2, typeorm-cli etc
   npm:
@@ -31,6 +33,18 @@
       - pm2
       - typeorm
       - ts-node
+  become: yes
+
+- name: Create nginx group
+  group:
+    name: nginx
+    state: present
+  become: yes
+
+- name: Create nginx user
+  user:
+    name: nginx
+    state: present
 
 - name: Git clone the rest-api project to deploy in some directory
   git:
@@ -38,16 +52,54 @@
     clone: yes
     dest: "{{ repo_dir }}"
 
+- name: Give ownership to the repositor for nginx
+  file:
+    dest: "{{ repo_dir }}"
+    owner: nginx
+    group: nginx
+    mode: u=rwX,g=rX,o=rX
+    recurse: yes
+  become: yes
+
 - name: In that directory execute npm install
   npm:
     path: "{{ repo_dir }}"
+    production: yes
 
 # uses the .env.j2 file with variable interpolated as a value
 - name: Copy the deployment template file to project root as .env file
   template:
     src: .env.j2
     dest: "{{ repo_dir }}/.env"
+    owner: nginx
+    group: nginx
+    mode: u=rw,g=r,o=r
+  become: yes
 
-- name: Build and start the project as a service using pm2
-- name: Configure to nginx to server the rest-api service as a proxy
+- name: Build the Nest.js project `npm run build`
+  command: npm run build
+  args:
+    chdir: "{{ repo_dir }}"
+
+- name: Start the project as a service using pm2
+  command: pm2 start {{ repo_dir }}/dist/main.js --name iac-restapi
+  become: yes
+
+- name: copy the nginx configuration file
+  template:
+    src: default.cfg.j2
+    dest: /etc/nginx/sites-available/iac-restapi.cfg
+  become: yes
+
+- name: create symlink from sites-available to sites-enabled
+  file:
+    src: /etc/nginx/sites-available/iac-restapi.cfg
+    dest: /etc/nginx/sites-enabled/default
+    state: link
+  become: yes
+
 - name: restart nginx server
+  service:
+    name: nginx
+    state: restarted
+  become: yes

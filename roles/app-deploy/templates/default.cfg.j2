@@ -1,0 +1,13 @@
+server {
+    listen 80;
+    
+    root {{ nginx_root_dir }};
+    server_name _;
+
+    access_log /var/log/nginx/reverse-access.log;
+    error_log /var/log/nginx/reverse_error.log;
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+    }
+}
