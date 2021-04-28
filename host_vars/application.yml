@@ -1,0 +1,17 @@
+---
+# application host variables
+
+# database related
+db_user: biruk
+db_name: iac_rest
+db_user_pass: iac$rest$api
+db_type: postgres
+db_host: 192.168.56.21
+db_port: 5432
+
+# application repositor related
+repo_url: https://github.com/BirukAbreham/iac-restapi-project.git
+repo_dir: /home/biruk/iac-restapi-project
+
+# nginx root directory
+nginx_root_dir: /home/biruk/iac-restapi-project

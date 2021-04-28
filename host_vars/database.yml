@@ -1,0 +1,5 @@
+---
+# database hosts variables
+db_user: biruk
+db_name: iac_rest
+db_user_pass: iac$rest$api

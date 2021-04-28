@@ -13,6 +13,7 @@
     port: 80/HTTP
     permanent: yes
     state: enabled
+  ignore_errors: yes
 
 - name: Install nginx web/proxy server
   apt:
@@ -22,10 +23,13 @@
   vars:
     packages:
       - nginx
-  environment: # does not run immediately
 
-- name: notify to start the nginx service
-  notify: Start Nginx
+- name: Restart Nginx
+  service:
+    name: nginx
+    state: restarted
 
-- name: notify to enable the nginx service
-  notify: Enable Nginx
+- name: Enable Nginx
+  service:
+    name: nginx
+    enabled: yes

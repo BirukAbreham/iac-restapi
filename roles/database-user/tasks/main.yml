@@ -13,11 +13,13 @@
 - name: psycopg2 python package installation (dependence)
   pip:
     name: psycopg2
+  ignore_errors: yes
 
 - name: Create a database for the application
   postgresql_db:
     name: "{{ db_name }}"
     conn_limit: "100" # Maximum possible concurrent connection limit
+  ignore_errors: yes
 
 - name: Grant permission for a user on the created database
   postgresql_user:
@@ -26,3 +28,4 @@
     password: "{{ db_user_pass }}"
     priv: ALL
     expires: infinity
+  ignore_errors: yes

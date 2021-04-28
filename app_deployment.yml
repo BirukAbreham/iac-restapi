@@ -1,2 +1,34 @@
 ---
-# This playbook deploys the whole application with app configuration
+# This playbook deploys the whole application with application configuration
+
+# Apply base configuration on database hosts
+- name: Setup base configuration for database hosts
+  hosts: database
+  become: true
+
+  roles:
+  - base-database
+
+# Apply create the database and user for the application
+- name: Create a database and permit a user do all staff on that database
+  hosts: database
+  become: true
+
+  roles:
+  - database-user
+
+# Apply base web server configuration on application hosts
+- name: Setup base configuration of nginx server on application hosts
+  hosts: application
+  become: true
+
+  roles:
+  - base-nginx
+
+# Apply deployment of the application on application host
+- name: Deploy the application on application host server
+  hosts: application
+  become: true
+
+  roles:
+  - app-deploy

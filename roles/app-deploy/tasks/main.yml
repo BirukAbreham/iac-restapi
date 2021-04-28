@@ -34,6 +34,7 @@
       - typeorm
       - ts-node
   become: yes
+  ignore_errors: yes
 
 - name: Create nginx group
   group:
@@ -65,6 +66,7 @@
   npm:
     path: "{{ repo_dir }}"
     production: yes
+  ignore_errors: yes
 
 # uses the .env.j2 file with variable interpolated as a value
 - name: Copy the deployment template file to project root as .env file

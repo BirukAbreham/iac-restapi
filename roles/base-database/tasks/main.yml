@@ -13,6 +13,7 @@
     port: 5432/TCP
     permanent: yes
     state: enabled
+  ignore_errors: yes
 
 - name: Install latest postgresql
   apt:
@@ -23,12 +24,13 @@
     packages:
       - postgresql
       - postgresql-contrib
-  environment: # does not run immediately
-    RUNLEVEL: 1
 
-- name: notify to start the postgresql service
-  notify: Start PostgreSQL
+- name: Restart PostgreSQL
+  service:
+    name: postgresql
+    state: restarted
 
-- name: notify to enable the postgresql service
-  notify: Enable PostgreSQL
-
+- name: Enable PostgreSQL
+  service:
+    name: postgresql
+    enabled: yes
