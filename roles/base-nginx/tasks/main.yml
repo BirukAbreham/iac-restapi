@@ -3,16 +3,27 @@
 - name: Check if ufw/firewall is enabled
   shell: ufw status
   changed_when: False
-  ignore_errors: True
+  ignore_errors: yes
   register: ufw_check
 - debug:
     msg: "{{ ufw_check }}"
 
-- name: Enable HTTP protocol for web application communication
-  firewalld:
-    port: 80/HTTP
-    permanent: yes
+- name: Enable UFW firewall
+  ufw:
     state: enabled
+  become: yes
+
+- name: Set logging to ON
+  ufw:
+    logging: on
+  become: yes
+
+- name: Allow access to port 80 for all incoming request
+  ufw:
+    rule: allow
+    port: 80
+    proto: tcp
+  become: yes
 
 - name: Install nginx web/proxy server
   apt:
@@ -22,13 +33,16 @@
   vars:
     packages:
       - nginx
+  become: yes
 
 - name: Restart Nginx
   service:
     name: nginx
     state: restarted
+  become: yes
 
 - name: Enable Nginx
   service:
     name: nginx
     enabled: yes
+  become: yes

@@ -10,29 +10,29 @@
   - base-database
   ignore_errors: "{{ ansible_check_mode }}"
 
-# # Apply creation of the database and user for the application
-# - name: Create a database and permit a user do all staff on that database
-#   hosts: database
-#   become: true
+# Apply creation of the database and user for the application
+- name: Create a database and permit a user to have full access on the database
+  hosts: database
+  become: true
 
-#   roles:
-#   - database-user
-#   ignore_errors: "{{ ansible_check_mode }}"
+  roles:
+  - database-user
+  ignore_errors: "{{ ansible_check_mode }}"
 
-# # Apply base web server configuration on application host
-# - name: Setup base configuration of nginx server on application hosts
-#   hosts: application
-#   become: true
+# Apply base web server configuration on application host
+- name: Setup base configuration of nginx server on application hosts
+  hosts: application
+  become: true
 
-#   roles:
-#   - base-nginx
-#   ignore_errors: "{{ ansible_check_mode }}"
+  roles:
+  - base-nginx
+  ignore_errors: "{{ ansible_check_mode }}"
 
-# # Apply deployment of the application on application host
-# - name: Deploy the application on application host server
-#   hosts: application
-#   become: true
+# Apply deployment of the application on application host
+- name: Deploy the application on application host server
+  hosts: application
+  become: true
 
-#   roles:
-#   - app-deploy
-#   ignore_errors: "{{ ansible_check_mode }}"
+  roles:
+  - app-deploy
+  ignore_errors: "{{ ansible_check_mode }}"
