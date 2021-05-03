@@ -18,6 +18,13 @@
     logging: on
   become: true
 
+- name: Allow access to ssh connection for all
+  ufw:
+    rule: allow
+    port: ssh
+    proto: tcp
+  become: yes
+
 - name: Allow access to port 5432 from the IP application host (192.168.56.20)
   ufw:
     rule: allow

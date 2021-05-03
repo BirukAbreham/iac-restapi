@@ -18,6 +18,13 @@
     logging: on
   become: yes
 
+- name: Allow access to ssh connection for all
+  ufw:
+    rule: allow
+    port: ssh
+    proto: tcp
+  become: yes
+
 - name: Allow access to port 80 for all incoming request
   ufw:
     rule: allow
