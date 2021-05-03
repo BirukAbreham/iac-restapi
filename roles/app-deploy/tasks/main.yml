@@ -13,7 +13,6 @@
 # Node.js PPA installation from nodesource for LTS version
 - name: Install PPA for the Node.js version 14 LTS
   shell: curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash -
-  ignore_errors: yes
   become: yes
 
 - name: Install latest version of Node.js
@@ -34,7 +33,6 @@
       - typeorm
       - ts-node
   become: yes
-  ignore_errors: yes
 
 - name: Create nginx group
   group:
@@ -66,7 +64,6 @@
   npm:
     path: "{{ repo_dir }}"
     production: yes
-  ignore_errors: yes
 
 # uses the .env.j2 file with variable interpolated as a value
 - name: Copy the deployment template file to project root as .env file

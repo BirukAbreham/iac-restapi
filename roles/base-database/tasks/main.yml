@@ -8,12 +8,26 @@
 - debug:
     msg: "{{ ufw_check }}"
 
-- name: Expose default port for postgresql client usage
-  firewalld:
-    port: 5432/TCP
-    permanent: yes
+- name: Enable UFW firewall
+  ufw:
     state: enabled
-  ignore_errors: yes
+  become: true
+
+- name: Set logging to ON
+  ufw:
+    logging: on
+  become: true
+
+- name: Allow access to port 5432 from the IP application host (192.168.56.20)
+  ufw:
+    rule: allow
+    port: 5432
+    proto: tcp
+    src: "{{ item }}"
+    log: yes
+  loop:
+    - 192.168.56.20
+  become: true
 
 - name: Install latest postgresql
   apt:
@@ -24,13 +38,16 @@
     packages:
       - postgresql
       - postgresql-contrib
+  become: true
 
 - name: Restart PostgreSQL
   service:
     name: postgresql
     state: restarted
+  become: true
 
 - name: Enable PostgreSQL
   service:
     name: postgresql
     enabled: yes
+  become: true
