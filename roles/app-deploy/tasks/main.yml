@@ -24,14 +24,13 @@
 
 - name: Install global npm packages such as pm2, typeorm-cli etc
   npm:
-    name: "{{ global_packages }}"
+    name: "{{ item }}"
     global: yes
-    production: yes
-  vars:
-    global_packages:
-      - pm2
-      - typeorm
-      - ts-node
+  loop:
+    - pm2
+    - typeorm
+    - ts-node
+    - "@nestjs/cli"
   become: yes
 
 - name: Create nginx group
@@ -44,12 +43,14 @@
   user:
     name: nginx
     state: present
+  become: yes
 
 - name: Git clone the rest-api project to deploy in some directory
   git:
     repo: "{{ repo_url }}"
     clone: yes
     dest: "{{ repo_dir }}"
+    force: yes
 
 - name: Give ownership to the repositor for nginx
   file:
@@ -76,7 +77,7 @@
   become: yes
 
 - name: Build the Nest.js project `npm run build`
-  command: npm run build
+  shell: npm run build
   args:
     chdir: "{{ repo_dir }}"
 

@@ -9,17 +9,18 @@
     dependencies:
       - libpq-dev
       - python3-pip
+      - acl
 
 - name: psycopg2 python package installation (dependence)
   pip:
     name: psycopg2
 
 - name: Create a database for the application
-  become: yes
-  become_user: postgres
   postgresql_db:
     name: "{{ db_name }}"
-    conn_limit: "100" # Maximum possible concurrent connection limit
+    template: template0
+    encoding: UTF8
+  become_user: postgres
 
 - name: Grant permission for a user on the created database
   postgresql_user:
@@ -28,3 +29,4 @@
     password: "{{ db_user_pass }}"
     priv: ALL
     expires: infinity
+  become_user: postgres
