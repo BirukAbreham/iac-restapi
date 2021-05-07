@@ -78,8 +78,9 @@
     chdir: "{{ repo_dir }}"
 
 - name: Start the project as a service using pm2
-  command: pm2 start {{ repo_dir }}/dist/main.js --name iac-restapi
-  become: yes
+  command: pm2 start main.js --name iac-restapi -f
+  args:
+    chdir: "{{ repo_dir }}/dist"
 
 - name: Give ownership to the repositor for nginx
   file:
