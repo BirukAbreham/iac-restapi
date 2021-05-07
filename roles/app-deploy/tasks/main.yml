@@ -52,28 +52,24 @@
     dest: "{{ repo_dir }}"
     force: yes
 
-- name: Give ownership to the repositor for nginx
-  file:
-    dest: "{{ repo_dir }}"
-    owner: nginx
-    group: nginx
-    mode: u=rwX,g=rX,o=rX
-    recurse: yes
-  become: yes
-
 - name: In that directory execute npm install
-  npm:
-    path: "{{ repo_dir }}"
-    production: yes
+  shell: npm install
+  args:
+    chdir: "{{ repo_dir }}"
 
 # uses the .env.j2 file with variable interpolated as a value
 - name: Copy the deployment template file to project root as .env file
   template:
     src: .env.j2
     dest: "{{ repo_dir }}/.env"
-    owner: nginx
-    group: nginx
-    mode: u=rw,g=r,o=r
+
+- name: Make the directory owned by current home user
+  file:
+    dest: "{{ repo_dir }}"
+    owner: biruk
+    group: biruk
+    mode: u=rwX,g=rX,o=rX
+    recurse: yes
   become: yes
 
 - name: Build the Nest.js project `npm run build`
@@ -83,6 +79,23 @@
 
 - name: Start the project as a service using pm2
   command: pm2 start {{ repo_dir }}/dist/main.js --name iac-restapi
+  become: yes
+
+- name: Give ownership to the repositor for nginx
+  file:
+    dest: "{{ repo_dir }}"
+    owner: nginx
+    group: nginx
+    mode: u=rwX,g=rX,o=rX
+    recurse: yes
+  become: yes
+
+- name: Give high priority to the environment varialbe
+  file:
+    dest: "{{ repo_dir}}/.env"
+    owner: nginx
+    group: nginx
+    mode: u=rw,g=r,o=r
   become: yes
 
 - name: copy the nginx configuration file
